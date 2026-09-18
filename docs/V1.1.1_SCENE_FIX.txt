@@ -1,0 +1,20 @@
+Jooo Scheduler v1.1.1 · Scene统计修复说明
+
+本版只处理第一优先级：不再覆盖Scene原始配置。
+
+1. /data/powercfg.sh 改为包装层：
+   - jood在旁路接收Scene模式/前台APP信息；
+   - 随后把原参数和环境变量完整转发给原始powercfg.sh；
+   - 原始Scene/第三方调度逻辑继续运行。
+
+2. /data/powercfg.json 不再安装、不再覆盖：
+   - 保留Scene原始JSON；
+   - 如果升级前仍是旧Jooo JSON，且旧版有备份，会自动恢复Scene原始JSON。
+
+3. 卸载：
+   - 仅当当前powercfg.sh仍属于Jooo时才恢复；
+   - 用户后来安装的新调度不会被Jooo卸载脚本覆盖；
+   - powercfg.json默认不动，仅处理旧Jooo残留JSON的恢复。
+
+4. 本阶段没有新增watch常驻监听、没有改CPU控制策略、没有新增日常优化。
+   后续按规划单独验证后再进入下一阶段。

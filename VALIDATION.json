@@ -1,0 +1,28 @@
+{
+  "module_id": "yumi_jooo",
+  "version": "1.5.0",
+  "author": "ZenJooo",
+  "target": "Snapdragon 8 Gen 3 / SM8650 series",
+  "checks": {
+    "go_unit_tests": "PASS",
+    "android_arm64_build": "PASS",
+    "elf_arch": "AArch64",
+    "shell_syntax": "PASS",
+    "webui_javascript_syntax": "PASS",
+    "webui_dom_references": "PASS",
+    "json_parse": "PASS",
+    "v4_config_migration": "PASS",
+    "onboarding_upgrade_skip": "PASS",
+    "game_profile_balanced_gate": 0.72,
+    "game_profile_extreme_gate_default": 0.50,
+    "adaptive_load_levels": ["light", "normal", "heavy"],
+    "config_export_import": "PASS (explicit import unit test + export implementation)",
+    "scene_wrapper_preserved": true,
+    "old_yumi_binary_present": false
+  },
+  "notes": [
+    "最终Android实机运行仍需用户设备验证。",
+    "极致游戏功耗和温度会显著高于均衡游戏。",
+    "温度保护优先于负载自适应。"
+  ]
+}

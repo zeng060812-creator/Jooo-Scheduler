@@ -1,0 +1,28 @@
+Jooo Scheduler 更新记录
+
+v1.5.0
+- 新用户三步首次安装引导。
+- 新增均衡游戏/极致游戏双游戏类型与逐游戏覆盖。
+- 新增light/normal/heavy游戏负载自适应。
+- 新增配置导出、导入、导入前备份。
+- WebUI显示游戏类型、负载等级和有效Prime Gate。
+
+v1.4.0
+- 平台范围从小米14扩展到Snapdragon 8 Gen 3 / SM8650系列。
+- 删除houji和固定policy0/2/5/7依赖。
+- 动态识别CPU policy、capacity、CPU列表、最大频率和Prime角色。
+- 动态生成游戏线程CPU亲和性mask。
+- WebUI改为动态CPU簇显示。
+- 保留v1.3.0日常轻量优化。
+
+v1.3.0
+- 补齐Balance日常轻量优化，不修改CPU频率。
+- background cpuset安全收敛和自动恢复。
+- ZRAM只在未初始化时安全尝试zstd。
+
+v1.2.0
+- jood watch自动前台监听。
+- auto/scene/webui三种控制来源。
+
+v1.1.1
+- Scene powercfg wrapper，保留原始Scene逻辑与powercfg.json。

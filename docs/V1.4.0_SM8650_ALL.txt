@@ -1,0 +1,12 @@
+Jooo Scheduler v1.4.0 · SM8650全机型动态适配
+
+- 删除houji机型白名单。
+- SoC识别改为SM8650系列属性匹配。
+- cpufreq policy由运行时Glob枚举。
+- CPU角色由capacity优先、最大频率后备自动分类。
+- 支持3个及以上policy、至少6核的SM8650拓扑。
+- taskset CPU mask根据实际CPU列表生成。
+- WebUI不再显示固定policy0/2/5/7角色。
+- 一键自检显示本机每个policy的角色/capacity/最大频率。
+
+安全边界：如果OEM内核不暴露标准cpufreq节点或节点不可用，模块自检失败并保持静默，不强行使用小米14参数。

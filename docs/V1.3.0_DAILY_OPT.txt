@@ -1,0 +1,9 @@
+Jooo Scheduler v1.3.0
+
+1. 完成上一轮WebUI增强收尾。
+2. 新增Balance日常轻量优化：
+   - background cpuset优先能效簇；
+   - 进入游戏/非Balance时恢复原值；
+   - ZRAM只在未初始化且支持zstd时安全切换；
+   - 不修改CPU频率、不强改swappiness/watermark。
+3. WebUI可独立开关日常优化、后台限制、ZRAM偏好。

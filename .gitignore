@@ -1,0 +1,16 @@
+# Build output
+bin/jood
+*.zip
+*.tar.gz
+
+# Runtime/generated state
+state/
+runtime/
+logs/
+*.log
+
+# Local tooling
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

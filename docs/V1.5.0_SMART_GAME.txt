@@ -1,0 +1,16 @@
+Jooo Scheduler v1.5.0
+
+新增：
+- 首次安装三步引导：Scene检测 -> 控制模式推荐 -> 初始游戏类型。
+- 游戏类型：均衡游戏 / 极致游戏，可逐游戏设置。
+- 极致游戏默认Prime Gate从72%派生到约50%。
+- 游戏内负载自适应：light / normal / heavy，带时间回差。
+- WebUI实时显示负载等级和有效Prime Gate。
+- config.json导出到Download；一键导入Download最新配置。
+- 导入前自动备份当前配置。
+
+保持：
+- SM8650全机型动态CPU topology。
+- Scene wrapper不覆盖powercfg.json。
+- 日常OEM调度 + 安全轻量优化。
+- 电池温度保护优先级最高。

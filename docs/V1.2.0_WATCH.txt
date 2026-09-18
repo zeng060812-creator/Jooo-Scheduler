@@ -1,0 +1,12 @@
+Jooo Scheduler v1.2.0 · 独立自动监听
+
+新增：
+1. control_mode 三种控制来源：
+   auto  = jood自己每2秒识别前台APP；不需要Scene。
+   scene = 只接受Scene 9.4.18包装层事件。
+   webui = 只接受WebUI手动切换。
+2. watch_enabled / watch_interval_ms，默认新装auto+2000ms。
+3. 升级兼容：v1.1.x旧配置首次读取会迁移为scene，保持升级前行为。
+4. auto模式息屏写入powersave状态并停止游戏控制；亮屏非游戏为balance；命中游戏白名单启动游戏daemon。
+5. 自动监听本身不写CPU频率；只有游戏daemon运行时才动态抬必要的scaling_min_freq。
+6. Scene wrapper和powercfg.json保护逻辑保持v1.1.1不变。

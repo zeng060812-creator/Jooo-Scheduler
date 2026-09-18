@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#0b0c10">
+  <meta name="color-scheme" content="dark">
+  <title>Jooo Scheduler</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
+  <header class="topbar glass">
+    <div class="brand-wrap">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4 13h4l2-7 4 12 2-5h4"/></svg>
+      </div>
+      <div>
+        <div class="brand">Jooo Scheduler</div>
+        <div class="brand-sub">SM8650 全机型 · 智能游戏调度 · v1.5</div>
+      </div>
+    </div>
+    <button id="refreshBtn" class="icon-btn" aria-label="刷新状态">
+      <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0 2 5M20 4v7h-7"/></svg>
+    </button>
+  </header>
+
+  <main class="main">
+    <section class="page active" data-page="overview">
+      <div class="hero glass">
+        <div class="hero-top">
+          <div>
+            <div class="eyebrow">当前策略</div>
+            <div id="strategyTitle" class="hero-title">正在读取…</div>
+          </div>
+          <div id="runtimeBadge" class="status-badge"><span></span>读取中</div>
+        </div>
+        <div id="strategyDesc" class="hero-desc">正在连接 Jooo 原生后端。</div>
+        <div class="hero-tags">
+          <span id="sceneTag" class="chip">Scene --</span>
+          <span id="packageTag" class="chip">前台 --</span>
+          <span id="versionTag" class="chip">v--</span>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <article class="metric glass">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24"><path d="M13 2 5 14h6l-1 8 9-13h-6z"/></svg>
+          </div>
+          <div><div class="metric-label">瞬时整机功耗</div><div class="metric-value"><span id="powerValue">--</span><small>W</small></div></div>
+        </article>
+        <article class="metric glass">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0Z"/></svg>
+          </div>
+          <div><div class="metric-label">电池温度</div><div class="metric-value"><span id="tempValue">--</span><small>°C</small></div></div>
+        </article>
+        <article class="metric glass">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 17h16M6 13l3-3 3 2 5-6 1 3"/></svg>
+          </div>
+          <div><div class="metric-label">游戏负载</div><div class="metric-value"><span id="demandValue">--</span><small>%</small></div></div>
+        </article>
+        <article class="metric glass">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>
+          </div>
+          <div><div class="metric-label">采样周期</div><div class="metric-value"><span id="sampleValue">--</span><small>ms</small></div></div>
+        </article>
+      </div>
+
+      <section class="section-block">
+        <div class="section-head"><div><h2>日常轻量优化</h2><p>Balance只做一次性后台收敛，不接管CPU频率。</p></div></div>
+        <div class="glass detail-card">
+          <div class="detail-row"><span>当前状态</span><strong id="dailyOptState">--</strong></div>
+          <div class="detail-row"><span>能效簇</span><strong id="dailyEffCpus">--</strong></div>
+          <div class="detail-row"><span>后台 cpuset</span><strong id="dailyCpuset">--</strong></div>
+          <div class="detail-row"><span>ZRAM</span><strong id="dailyZram">--</strong></div>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-head">
+          <div><h2>SM8650 动态 CPU 簇</h2><p>实时枚举 cpufreq policy / capacity / 频率表，不依赖机型名单。</p></div>
+        </div>
+        <div id="clusterGrid" class="cluster-grid"></div>
+      </section>
+
+      <section id="gameRuntimeCard" class="section-block hidden">
+        <div class="section-head"><div><h2>游戏控制器</h2><p>仅游戏时运行，退出后自动恢复。</p></div></div>
+        <div class="glass detail-card">
+          <div class="detail-row"><span>游戏包名</span><strong id="daemonPackage">--</strong></div>
+          <div class="detail-row"><span>性能档位</span><strong id="daemonTier">--</strong></div>
+          <div class="detail-row"><span>游戏类型</span><strong id="daemonProfile">--</strong></div>
+          <div class="detail-row"><span>负载自适应</span><strong id="loadLevelState">--</strong></div>
+          <div class="detail-row"><span>最重线程</span><strong id="topThread">--</strong></div>
+          <div class="detail-row"><span>有效 Prime Gate</span><strong id="effectivePrimeGate">--</strong></div>
+          <div class="detail-row"><span>X4 Prime</span><strong id="primeState">--</strong></div>
+          <div class="detail-row"><span>瞬态 Burst</span><strong id="burstState">--</strong></div>
+          <div class="detail-row"><span>电池温度保护</span><strong id="thermalState">--</strong></div>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-head"><div><h2>最近场景</h2><p>仅保留最近切换记录，方便确认 Scene 是否正确识别。</p></div></div>
+        <div id="historyList" class="history-list glass"><div class="history-empty">暂无切换记录</div></div>
+      </section>
+    </section>
+
+    <section class="page" data-page="tuning">
+      <div class="section-title-block"><h1>调校</h1><p>所有选项直接写入 jood 后端，运行中支持热更新。</p></div>
+
+      <div class="glass control-card control-source-card">
+        <div class="control-head"><div><div class="setting-title">控制来源</div><div class="setting-desc">三种模式互斥，避免 Scene、自动监听和 WebUI 同时抢控制权。</div></div></div>
+        <select id="controlMode" class="select-control">
+          <option value="auto">jood 自动识别（无需 Scene）</option>
+          <option value="scene">Scene 9.4.18 接管</option>
+          <option value="webui">WebUI 手动控制</option>
+        </select>
+        <div id="controlModeHint" class="control-note">自动模式每 2 秒识别一次前台应用；日常不写 CPU 频率。</div>
+      </div>
+
+      <div class="glass settings-group">
+        <div class="setting-row">
+          <div class="setting-main"><div class="setting-title">Scene 集成</div><div class="setting-desc">包装 /data/powercfg.sh：Jooo旁路接收场景，同时保留Scene原始脚本和统计。</div></div>
+          <label class="switch"><input id="sceneEnabled" type="checkbox"><span></span></label>
+        </div>
+        <div id="watchEnabledRow" class="setting-row">
+          <div class="setting-main"><div class="setting-title">自动前台监听</div><div class="setting-desc">仅 auto 模式使用；低频识别前台包名，本身不写 CPU 频率。</div></div>
+          <label class="switch"><input id="watchEnabled" type="checkbox"><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-main"><div class="setting-title">游戏引擎</div><div class="setting-desc">只有识别到游戏才启动原生守护进程。</div></div>
+          <label class="switch"><input id="gameEngine" type="checkbox"><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-main"><div class="setting-title">游戏负载自适应</div><div class="setting-desc">大厅/剧情持续轻载自动降一档；团战/BOSS重载自动升一档，带回差避免频繁跳档。</div></div>
+          <label class="switch"><input id="adaptiveGameLoad" type="checkbox"><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-main"><div class="setting-title">Balance 日常轻量优化</div><div class="setting-desc">不碰CPU频率；仅安全收敛后台任务，游戏前自动恢复。</div></div>
+          <label class="switch"><input id="dailyOptimize" type="checkbox"><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-main"><div class="setting-title">后台任务优先能效簇</div><div class="setting-desc">仅在标准 cpuset 节点存在时生效，并保存原值用于恢复。</div></div>
+          <label class="switch"><input id="dailyBgLimit" type="checkbox"><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-main"><div class="setting-title">ZRAM 优先 zstd</div><div class="setting-desc">仅zram尚未初始化且内核支持时切换；运行中的zram不会热改。</div></div>
+          <label class="switch"><input id="zramPreferZstd" type="checkbox"><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-main"><div class="setting-title">跟随 Scene 档位</div><div class="setting-desc">开启后，游戏强度跟随 Scene 省电/均衡/性能/极速。</div></div>
+          <label class="switch"><input id="followSceneTier" type="checkbox"><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-main"><div class="setting-title">游戏线程放置</div><div class="setting-desc">主线程优先实际识别出的性能簇；达到阈值后才开放 Prime。</div></div>
+          <label class="switch"><input id="threadPlacement" type="checkbox"><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-main"><div class="setting-title">ZenJooo 电池温度保护</div><div class="setting-desc">游戏时电池达到阈值会把性能/极速临时压到均衡，降温 2°C 后恢复。使用去温控模块时可关闭。</div></div>
+          <label class="switch"><input id="thermalGuard" type="checkbox"><span></span></label>
+        </div>
+      </div>
+
+      <div class="glass mode-guide">
+        <div class="setting-title">四档实际效果</div>
+        <div class="mode-guide-grid">
+          <div><strong>省电</strong><span>最低游戏地板，Prime 基本关闭，适合轻负载/锁帧。</span></div>
+          <div><strong>均衡</strong><span>推荐默认档，优先主性能簇，按需启用次性能簇。</span></div>
+          <div><strong>性能</strong><span>提高中大核地板，重负载更容易开放 Prime。</span></div>
+          <div><strong>极速</strong><span>最激进，仅建议高帧游戏；45°C 保护开启时会自动回落。</span></div>
+        </div>
+      </div>
+
+      <div id="manualControlCard" class="glass control-card hidden">
+        <div class="control-head"><div><div class="setting-title">WebUI 手动控制</div><div class="setting-desc">仅 control_mode=webui 生效。日常按钮恢复原厂状态；游戏按钮用当前前台 APP 启动控制器。</div></div></div>
+        <div class="manual-actions">
+          <button id="manualDailyBtn" class="wide-btn subtle">切回日常均衡</button>
+          <button id="manualGameBtn" class="wide-btn primary">当前前台按游戏启动</button>
+        </div>
+      </div>
+
+      <div class="glass control-card">
+        <div class="control-head"><div><div class="setting-title">默认游戏类型</div><div class="setting-desc">未单独设置的游戏使用此类型。均衡游戏更省电；极致游戏更早开放 Prime。</div></div><div id="gameProfileText" class="value-pill">均衡游戏</div></div>
+        <div id="gameProfileSegments" class="segments two"><button data-profile="balanced">均衡游戏</button><button data-profile="extreme">极致游戏</button></div>
+        <div class="control-note">均衡游戏默认 Prime Gate 72%；极致游戏在同一基准上提前约 22%，默认约 50%。每个游戏可在“游戏助手”单独覆盖。</div>
+      </div>
+
+      <div id="fixedTierCard" class="glass control-card">
+        <div class="control-head"><div><div class="setting-title">固定游戏档位</div><div class="setting-desc">关闭“跟随 Scene 档位”后生效。</div></div><div id="fixedTierText" class="value-pill">均衡</div></div>
+        <div id="tierSegments" class="segments four">
+          <button data-tier="powersave">省电</button><button data-tier="balance">均衡</button><button data-tier="performance">性能</button><button data-tier="fast">极速</button>
+        </div>
+      </div>
+
+      <div class="glass control-card">
+        <div class="control-head"><div><div class="setting-title">均衡游戏 Prime Gate 基准</div><div class="setting-desc">均衡游戏直接使用；极致游戏自动降低约22%。阈值越高越省电。</div></div><div class="value-pill"><span id="primeGateText">72</span>%</div></div>
+        <input id="primeGate" class="range" type="range" min="50" max="95" step="1" value="72">
+        <div class="range-labels"><span>更积极 50%</span><span>更省电 95%</span></div>
+        <div id="primeGateHint" class="control-note">72% 为均衡游戏通用起点；极致游戏默认派生为约50%。不同厂商散热/调度可自行微调。</div>
+      </div>
+
+      <div id="thermalLimitCard" class="glass control-card">
+        <div class="control-head"><div><div class="setting-title">电池保护温度</div><div class="setting-desc">默认 45°C。达到阈值后性能/极速临时按均衡控制；低于阈值 2°C 自动恢复。</div></div><div class="value-pill"><span id="thermalLimitText">45</span>°C</div></div>
+        <input id="thermalLimit" class="range" type="range" min="42" max="50" step="0.5" value="45">
+        <div class="range-labels"><span>42°C 更保守</span><span>50°C 更宽松</span></div>
+      </div>
+
+      <div id="watchIntervalCard" class="glass control-card">
+        <div class="control-head"><div><div class="setting-title">前台监听周期</div><div class="setting-desc">仅 auto 模式使用。默认 2000ms；过低会增加 dumpsys 开销。</div></div><div class="value-pill"><span id="watchIntervalText">2000</span>ms</div></div>
+        <input id="watchInterval" class="range" type="range" min="500" max="10000" step="500" value="2000">
+        <div class="range-labels"><span>500ms 更灵敏</span><span>10000ms 更省电</span></div>
+      </div>
+
+      <div class="glass control-card">
+        <div class="control-head"><div><div class="setting-title">游戏采样周期</div><div class="setting-desc">越短响应越快但开销略高；建议 100–160ms。</div></div><div class="value-pill"><span id="sampleText">120</span>ms</div></div>
+        <input id="sampleMS" class="range" type="range" min="80" max="500" step="20" value="120">
+        <div class="range-labels"><span>80ms</span><span>500ms</span></div>
+      </div>
+
+      <div class="glass control-card">
+        <div class="control-head"><div><div class="setting-title">日志等级</div><div class="setting-desc">日常建议“标准”，排障时再开详细。</div></div><div id="logLevelText" class="value-pill">标准</div></div>
+        <div id="logSegments" class="segments three"><button data-log="0">精简</button><button data-log="1">标准</button><button data-log="2">详细</button></div>
+      </div>
+
+      <button id="resetConfigBtn" class="wide-btn subtle"><svg viewBox="0 0 24 24"><path d="M4 4v6h6M20 20v-6h-6M5 15a7 7 0 0 0 12 2M19 9A7 7 0 0 0 7 7"/></svg>恢复默认调校</button>
+    </section>
+
+    <section class="page" data-page="games">
+      <div class="section-title-block"><h1>游戏助手</h1><p>自动识别常见游戏；每个游戏可单独选择“均衡游戏 / 极致游戏”，并可加入任意新游戏。</p></div>
+      <div class="glass info-banner">
+        <svg viewBox="0 0 24 24"><path d="M8 12h8M12 8v8M7 5h10l4 7-3 6-4-2H10l-4 2-3-6z"/></svg>
+        <div><strong id="gameCount">正在检测游戏…</strong><span>根据当前控制来源识别为游戏时，jood 才会启动。</span></div>
+      </div>
+
+      <div class="section-head compact"><div><h2>当前前台 APP</h2><p>直接查看包名并一键加入；若这里显示 KernelSU/Scene，可使用 5 秒捕获。</p></div></div>
+      <div class="glass foreground-card">
+        <div id="foregroundIcon" class="game-avatar">?</div>
+        <div class="game-info"><div id="foregroundName" class="game-name">正在读取…</div><div id="foregroundPkg" class="game-pkg">--</div></div>
+        <button id="addForegroundBtn" class="small-btn primary">加入游戏</button>
+      </div>
+      <div class="capture-row">
+        <button id="captureForegroundBtn" class="wide-btn subtle">5 秒捕获目标 APP</button>
+        <button id="addCapturedBtn" class="wide-btn subtle hidden">加入最近捕获：<span id="capturedPkg">--</span></button>
+      </div>
+      <div class="capture-tip">使用方法：点“5 秒捕获”后立刻切到目标游戏，等待 5 秒；返回 WebUI 后即可一键加入。</div>
+
+      <div class="section-head compact"><div><h2>已检测游戏</h2><p>自动识别 + 自定义游戏。</p></div><button id="reloadGamesBtn" class="text-btn">重新检测</button></div>
+      <div id="gamesList" class="list-stack"><div class="empty glass">正在读取…</div></div>
+
+      <div class="section-head compact"><div><h2>自定义游戏</h2><p>加入后同样会触发游戏控制器。</p></div></div>
+      <div class="glass add-game-card">
+        <input id="customGameInput" type="text" autocomplete="off" spellcheck="false" placeholder="例如 com.example.game">
+        <button id="pickAppBtn" class="small-btn">选择应用</button>
+        <button id="addGameBtn" class="small-btn primary">添加</button>
+      </div>
+      <div id="customGamesList" class="list-stack small"></div>
+    </section>
+
+    <section class="page" data-page="diagnostics">
+      <div class="section-title-block"><h1>诊断</h1><p>每个按钮都执行真实后端动作，危险操作会二次确认。</p></div>
+
+      <div class="action-grid">
+        <button id="selftestBtn" class="action-card glass"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg><span>一键自检</span><small>SoC / 拓扑 / Scene</small></button>
+        <button id="diagBtn" class="action-card glass"><svg viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M5 20h14"/></svg><span>导出诊断</span><small>保存到 Download</small></button>
+        <button id="exportConfigBtn" class="action-card glass"><svg viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M5 20h14"/></svg><span>导出配置</span><small>config.json → Download</small></button>
+        <button id="importConfigBtn" class="action-card glass"><svg viewBox="0 0 24 24"><path d="M12 21V9m-4 4 4-4 4 4M5 4h14"/></svg><span>导入配置</span><small>读取 Download 最新备份</small></button>
+        <button id="reinstallSceneBtn" class="action-card glass"><svg viewBox="0 0 24 24"><path d="M12 2v4m0 12v4M4.9 4.9l2.8 2.8m8.6 8.6 2.8 2.8M2 12h4m12 0h4M4.9 19.1l2.8-2.8m8.6-8.6 2.8-2.8"/></svg><span>重装 Scene 后端</span><small>修复 powercfg 入口</small></button>
+        <button id="stopBtn" class="action-card glass"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg><span>停止游戏引擎</span><small>立即恢复 CPU/线程</small></button>
+      </div>
+
+      <button id="restoreBtn" class="danger-btn"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg><span><strong>强制恢复原厂状态</strong><small>停止守护进程并恢复 CPU 上下限与线程亲和性</small></span></button>
+
+      <div class="section-head compact"><div><h2>运行日志</h2><p>日志位于 /data/adb/yumi_jooo/logs/，仅加载最后 120 行。</p></div><button id="reloadLogsBtn" class="text-btn">刷新日志</button></div>
+      <pre id="logView" class="glass log-view">正在读取…</pre>
+
+      <div class="glass about-card">
+        <div class="about-row"><span>模块 ID</span><strong>yumi_jooo</strong></div>
+        <div class="about-row"><span>作者</span><strong>ZenJooo</strong></div>
+        <div class="about-row"><span>后端</span><strong>jood · Go ARM64</strong></div>
+        <div class="about-row"><span>日常策略</span><strong>OEM 原厂 CPU 调速器</strong></div>
+        <div class="about-row"><span>日志目录</span><strong>/data/adb/yumi_jooo/logs</strong></div>
+        <div class="about-row"><span>温度保护</span><strong>默认 45°C / 回差 2°C</strong></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav glass" aria-label="主导航">
+    <button class="nav-btn active" data-target="overview"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4zm10 7h6v-9h-6zM4 20h6v-3H4zm10-13h6V4h-6z"/></svg><span>总览</span></button>
+    <button class="nav-btn" data-target="tuning"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M8 14v6"/></svg><span>调校</span></button>
+    <button class="nav-btn" data-target="games"><svg viewBox="0 0 24 24"><path d="M8 12h8M12 8v8M7 5h10l4 7-3 6-4-2H10l-4 2-3-6z"/></svg><span>游戏</span></button>
+    <button class="nav-btn" data-target="diagnostics"><svg viewBox="0 0 24 24"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="3"/></svg><span>诊断</span></button>
+  </nav>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-sheet glass">
+      <div class="modal-handle"></div>
+      <div class="modal-head"><h3 id="modalTitle">详情</h3><button class="icon-btn small" data-close-modal aria-label="关闭">×</button></div>
+      <div id="modalBody" class="modal-body"></div>
+      <div id="modalActions" class="modal-actions"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="assets/app.js"></script>
+</body>
+</html>
