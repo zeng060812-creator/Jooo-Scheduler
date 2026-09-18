@@ -1,3 +1,10 @@
+Jooo Scheduler 上游与二次开发说明
+================================
+Jooo Scheduler 基于 imacte/yumi 进行二次开发、重构与 Snapdragon 8 Gen 3 / SM8650 适配；部分调度设计与工程思路参考 yc9559/uperf。
+Yumi: https://github.com/imacte/yumi （GPL-3.0）
+uperf: https://github.com/yc9559/uperf （Apache-2.0）
+本项目不是上述上游的官方版本。
+
 Jooo Scheduler v1.5.0 · Snapdragon 8 Gen 3 智能游戏调度
 
 作者：ZenJooo

@@ -1,6 +1,9 @@
 # Jooo Scheduler
 
-**Jooo Scheduler** 是一个面向 **Qualcomm Snapdragon 8 Gen 3 / SM8650 系列** Android 设备的开源调度项目，模块 ID 为 `yumi_jooo`，作者 **ZenJooo**。
+> **二次开发声明 / Upstream Notice**  
+> Jooo Scheduler 是基于 **[imacte/yumi](https://github.com/imacte/yumi)** 进行二次开发、重构与 Snapdragon 8 Gen 3 / SM8650 适配的下游项目；部分调度设计与工程思路参考 **[yc9559/uperf](https://github.com/yc9559/uperf)**。本项目不是 Yumi 或 uperf 的官方版本，与上游作者不存在官方隶属或背书关系。
+
+**Jooo Scheduler** 面向 **Qualcomm Snapdragon 8 Gen 3 / SM8650 系列** Android 设备，模块 ID 为 `yumi_jooo`，维护者 **ZenJooo**。
 
 当前版本：**v1.5.0**
 
@@ -144,6 +147,9 @@ WebUI 的“诊断”页面支持完整配置导出和导入。
 
 日常轻载低功耗是设计目标，但整机功耗还受屏幕亮度、刷新率、基带、5G/Wi‑Fi、GPS、后台任务、充电状态等影响。本项目不会承诺固定整机功耗值。
 
-## 开源协议
+## 上游与开源协议
 
-本项目使用 [MIT License](LICENSE)。
+- 主要上游：[`imacte/yumi`](https://github.com/imacte/yumi) — GPL-3.0。
+- 设计参考：[`yc9559/uperf`](https://github.com/yc9559/uperf) — Apache-2.0。
+- Jooo Scheduler 作为基于 Yumi 的二次开发版本，仓库整体按 **GNU GPL v3** 发布；上游版权与许可归各自作者所有。
+- 更完整的来源与归属说明见 [UPSTREAMS.md](UPSTREAMS.md)。

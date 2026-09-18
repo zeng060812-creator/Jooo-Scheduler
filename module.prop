@@ -3,4 +3,4 @@ name=Jooo Scheduler · Snapdragon 8 Gen 3
 version=v1.5.0-智能游戏调度
 versionCode=10500
 author=ZenJooo
-description=Snapdragon 8 Gen 3 / SM8650动态自适配｜首次安装三步引导｜Scene/auto/WebUI三种控制｜均衡游戏/极致游戏逐游戏配置｜light/normal/heavy负载自适应｜配置导入导出｜日常OEM调度+安全轻优化｜45°C电池保护
+description=基于 imacte/yumi 二次开发并参考 uperf 设计｜Snapdragon 8 Gen 3 / SM8650动态自适配｜Scene/auto/WebUI三种控制｜均衡/极致游戏｜负载自适应｜配置导入导出｜日常OEM调度+安全轻优化｜温度保护

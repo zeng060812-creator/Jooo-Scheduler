@@ -1,0 +1,20 @@
+Jooo Scheduler
+
+Downstream / modified project notice
+-----------------------------------
+Jooo Scheduler is a downstream modified project based on:
+
+1. Yumi
+   https://github.com/imacte/yumi
+   License: GNU GPL v3
+
+Development also referenced ideas from:
+
+2. uperf
+   https://github.com/yc9559/uperf
+   License: Apache License 2.0
+
+Jooo Scheduler is not an official release of Yumi or uperf and is not endorsed by their upstream maintainers.
+Downstream maintainer: ZenJooo
+
+Original upstream copyrights remain with their respective copyright holders.
